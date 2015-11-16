@@ -16,26 +16,18 @@ class SessionsController < Devise::SessionsController
   def create
     respond_to do |format|
       format.html do
-        if request.env['omniauth.auth']
-          auth_hash = request.env['omniauth.auth']
+        auth_hash = request.env['omniauth.auth']
 
-          staff = Staff.find_by_auth(auth_hash)
+        staff = Staff.find_by_auth(auth_hash)
 
-          sign_in_and_redirect(resource_name, staff) if staff.present?
-        else
-          super
-        end
+        sign_in_and_redirect(resource_name, staff) if staff.present?
       end
       format.json do
-        self.resource = warden.authenticate(auth_options)
-        if resource
-          sign_in(resource_name, resource)
-          api_token = ApiToken.create! staff: resource
-          resource.api_token = api_token.token
-          render json: resource
-        else
-          render json: { error: 'Invalid Login' }, status: 401
-        end
+        auth_hash = request.env['omniauth.auth']
+
+        staff = Authentication.find_with_omniauth(auth_hash)
+
+        sign_in_and_redirect(resource_name, staff) if staff.present?
       end
     end
   end

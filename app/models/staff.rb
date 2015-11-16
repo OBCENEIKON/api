@@ -43,6 +43,7 @@ class Staff < ActiveRecord::Base
   has_many :projects, through: :memberships
   has_many :roles, -> { uniq }, through: :memberships
   has_many :api_tokens
+  has_many :authentications
 
   has_and_belongs_to_many :groups
 
@@ -64,7 +65,7 @@ class Staff < ActiveRecord::Base
   end
 
   def self.find_by_auth(auth_hash)
-    auth_match = Authentications.find_by(provider: auth_hash['provider'], uid: auth_hash['uid'].to_s)
+    auth_match = Authentication.find_by(provider: auth_hash['provider'], uid: auth_hash['uid'].to_s)
 
     if auth_match
       staff = Staff.find(auth_match.staff_id)
@@ -73,7 +74,7 @@ class Staff < ActiveRecord::Base
     end
 
     if staff
-      Authentications.create staff_id: staff.id, provider: auth_hash['provider'], uid: auth_hash['uid'].to_s
+      Authentication.create staff_id: staff.id, provider: auth_hash['provider'], uid: auth_hash['uid'].to_s
     end
 
     staff

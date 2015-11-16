@@ -10,17 +10,7 @@ Rails.application.routes.draw do
     devise_for :staff, controllers: { sessions: 'sessions' }
 
     devise_scope :staff do
-      match '/staff/auth/:provider/callback', to: 'sessions#create', via: [:get, :post], defaults: { format: :html }
-    end
-
-    resources :saml, only: :index do
-      collection do
-        get :init
-        get :sso
-        post :acs
-        get :metadata
-        get :logout
-      end
+      match '/staff/auth/:provider/callback', to: 'sessions#create', via: [:get, :post], defaults: { format: :json }
     end
 
     # Products & related

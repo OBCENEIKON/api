@@ -28,6 +28,7 @@ gem 'responders'
 # Authentication
 gem 'devise'
 gem 'omniauth'
+gem 'omniauth-identity'
 
 # Authorization
 gem 'pundit'
