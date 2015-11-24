@@ -70,12 +70,17 @@ ActiveRecord::Schema.define(version: 20151113182253) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "staff_id"
-    t.string   "provider"
-    t.string   "uid"
+    t.string   "provider",           default: "", null: false
+    t.string   "uid",                default: "", null: false
+    t.integer  "sign_in_count",      default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet     "current_sign_in_ip"
+    t.inet     "last_sign_in_ip"
   end
 
-  add_index "authentications", ["provider", "uid"], name: "index_authentications_on_provider_and_uid", using: :btree
   add_index "authentications", ["staff_id"], name: "index_authentications_on_staff_id", using: :btree
+  add_index "authentications", ["uid", "provider", "staff_id"], name: "index_authentications_on_uid_and_provider_and_staff_id", unique: true, using: :btree
 
   create_table "bundled_products", force: :cascade do |t|
     t.integer  "bundle_id"

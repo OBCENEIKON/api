@@ -2,17 +2,22 @@
 #
 # Table name: authentications
 #
-#  id         :integer          not null, primary key
-#  created_at :datetime
-#  updated_at :datetime
-#  staff_id   :integer
-#  provider   :string
-#  uid        :string
+#  id                 :integer          not null, primary key
+#  created_at         :datetime
+#  updated_at         :datetime
+#  staff_id           :integer
+#  provider           :string           default(""), not null
+#  uid                :string           default(""), not null
+#  sign_in_count      :integer          default(0), not null
+#  current_sign_in_at :datetime
+#  last_sign_in_at    :datetime
+#  current_sign_in_ip :inet
+#  last_sign_in_ip    :inet
 #
 # Indexes
 #
-#  index_authentications_on_provider_and_uid  (provider,uid)
-#  index_authentications_on_staff_id          (staff_id)
+#  index_authentications_on_staff_id                       (staff_id)
+#  index_authentications_on_uid_and_provider_and_staff_id  (uid,provider,staff_id) UNIQUE
 #
 
 FactoryGirl.define do

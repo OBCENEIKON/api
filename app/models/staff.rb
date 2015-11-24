@@ -28,7 +28,7 @@
 #  index_staff_on_reset_password_token  (reset_password_token) UNIQUE
 #
 
-class Staff < ActiveRecord::Base
+class Staff < OmniAuth::Identity::Models::ActiveRecord
   include PgSearch
 
   self.table_name = :staff
@@ -47,6 +47,8 @@ class Staff < ActiveRecord::Base
   has_many :groups_staff
   has_many :groups, through: :groups_staff, dependent: :destroy
 
+  validates :email, format: /\A[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}\z/i, uniqueness: true, presence: true
+  validates :password, presence: true
   validates :phone, length: { maximum: 30 }, allow_blank: true, format: { with: /\A\+?[0-9\-]+\*?\z/ }
 
   # Include default devise modules. Others available are:

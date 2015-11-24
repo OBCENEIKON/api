@@ -7,21 +7,21 @@ Rails.application.routes.draw do
     mount_extensions
 
     # Auth
-    devise_for :staff, controllers: { sessions: 'sessions' }
+    devise_for :staff, controllers: { sessions: 'sessions', omniauth_callbacks: 'staff/' }
 
-    devise_scope :staff do
-      match '/staff/auth/:provider/callback', to: 'sessions#create', via: [:get, :post], defaults: { format: :html }
-    end
+    # devise_scope :staff do
+    #   match '/staff/auth/:provider/callback', to: 'sessions#create', via: [:get, :post], defaults: { format: :json }
+    # end
 
-    resources :saml, only: :index do
-      collection do
-        get :init
-        get :sso
-        post :acs
-        get :metadata
-        get :logout
-      end
-    end
+    # resources :saml, only: :index do
+    #   collection do
+    #     get :init
+    #     get :sso
+    #     post :acs
+    #     get :metadata
+    #     get :logout
+    #   end
+    # end
 
     # Products & related
     resources :products
