@@ -43,7 +43,7 @@
       };
 
       return $http
-        .post('/api/v1/staff/sign_in', credentials)
+        .post('/api/v1/staff/auth/identity/callback', credentials)
         .success(loginSuccess);
 
       function loginSuccess(data) {

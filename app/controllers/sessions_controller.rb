@@ -1,6 +1,7 @@
 class SessionsController < Devise::SessionsController
   respond_to :json, :html
 
+  skip_before_filter :verify_authenticity_token, only: :create
   skip_before_action :require_no_authentication, only: :create
   skip_before_action :verify_signed_out_user, only: :destroy
   # before_action :pre_hook
@@ -16,18 +17,20 @@ class SessionsController < Devise::SessionsController
   def create
     respond_to do |format|
       format.html do
+        super
+      end
+      format.json do
         if request.env['omniauth.auth']
           auth_hash = request.env['omniauth.auth']
 
-          staff = Staff.find_by_auth(auth_hash)
-
-          sign_in_and_redirect(resource_name, staff) if staff.present?
+          self.resource = Staff.find_by_auth(auth_hash)
+          # warden.set_user(resource)
         else
-          super
+          self.resource = warden.authenticate(auth_options)
         end
-      end
-      format.json do
-        self.resource = warden.authenticate(auth_options)
+
+        ap 'Warden User:'
+        ap warden.user
         if resource
           sign_in(resource_name, resource)
           api_token = ApiToken.create! staff: resource

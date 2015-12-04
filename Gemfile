@@ -29,6 +29,7 @@ gem 'responders'
 gem 'devise'
 gem 'omniauth'
 gem 'omniauth-identity'
+gem 'rack-contrib'
 
 # Authorization
 gem 'pundit'

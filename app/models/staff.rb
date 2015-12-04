@@ -56,18 +56,37 @@ class Staff < OmniAuth::Identity::Models::ActiveRecord
   # Enabling others may require migrations to be made and run
   devise :database_authenticatable, :trackable, :validatable
 
+  # delegate :sign_in_count, :current_sign_in_at, :last_sign_in_at, :current_sign_in_ip, :last_sign_in_ip,
+  #          to: :authentications, allow_nil: true
+
   enum role: { user: 0, admin: 1, manager: 2 }
 
   attr_accessor :api_token
 
+  alias_attribute :password_digest, :encrypted_password
+
+  # delegate :sign_in_count=, :current_sign_in_at=, :last_sign_in_at=, :current_sign_in_ip=, :last_sign_in_ip=,
+  #          to: :authentications
+
   pg_search_scope :search, against: [:first_name, :last_name, :email], using: { tsearch: { prefix: true } }
+
+  # after_save :save_authentication, :if => lambda {|s| s.authentications }
+  #
+  # def initialize(*params)
+  #   super(*params)
+  #   self.build_authentication if authentication.nil?
+  # end
+  #
+  # def save_authentication
+  #   self.authentications.save
+  # end
 
   def latest_alerts
     alerts.latest
   end
 
   def self.find_by_auth(auth_hash)
-    auth_match = Authentications.find_by(provider: auth_hash['provider'], uid: auth_hash['uid'].to_s)
+    auth_match = Authentications.find_or_create_by(provider: auth_hash['provider'], uid: auth_hash['uid'].to_s)
 
     if auth_match
       staff = Staff.find(auth_match.staff_id)
@@ -76,7 +95,8 @@ class Staff < OmniAuth::Identity::Models::ActiveRecord
     end
 
     if staff
-      Authentications.create staff_id: staff.id, provider: auth_hash['provider'], uid: auth_hash['uid'].to_s
+      auth_match.staff_id = staff.id
+      auth_match.save
     end
 
     staff

@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
 
   protect_from_forgery
   skip_before_action :verify_authenticity_token, if: :json_request?, only: [:create, :acs]
-  before_action :require_user
+  # before_action :require_user
 
   def_param_group :answers do
     param :answers, Array, desc: 'Provisioning Answers', allow_nil: true do
@@ -33,6 +33,9 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user
+    ap "ApplicationController#{(!__method__.nil? ? '::'+__method__.to_s : '')}: #{__LINE__}"
+    ap "user_signed_in?: #{user_signed_in?}"
+    ap "staff_signed_in? #{staff_signed_in?}"
     head :unauthorized unless user_signed_in?
   end
 
